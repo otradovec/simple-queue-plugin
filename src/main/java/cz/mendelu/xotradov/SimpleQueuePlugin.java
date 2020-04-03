@@ -1,4 +1,4 @@
-package io.jenkins.plugins;
+package cz.mendelu.xotradov;
 
 import hudson.Plugin;
 import hudson.model.Queue;
@@ -7,6 +7,10 @@ import jenkins.model.Jenkins;
 
 import java.util.logging.Logger;
 
+
+/**
+ * @author Jaroslav Otradovec
+ */
 public class SimpleQueuePlugin extends Plugin {
     private final static Logger logger = Logger.getLogger(SimpleQueuePlugin.class.getName());
 

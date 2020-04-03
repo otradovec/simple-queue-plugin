@@ -1,0 +1,7 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:s="/lib/form">
+    <l:ajax>
+        <!--<st:include page="" items="${it.queueItems}" filtered="${it.isFilterQueue()}" />-->
+        <table id="buildQueue" class="pane"><tr><td colspan="2" class="pane-header">Build Queue</td></tr><tr><td class="pane" colspan="2">Noooo builds in the queue.</td></tr></table>
+    </l:ajax>
+</j:jelly>
