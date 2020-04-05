@@ -61,13 +61,15 @@
                                 </j:choose>
                             </td>
                             <td class="pane" width="16" align="center" valign="middle">
+                                <!--on click  --><l:icon src="${rootURL}/plugin/simple-queue/images/arrow_up_16.png" />
+                            </td>
+                            <td class="pane" width="16" align="center" valign="middle">
+                                <!--on click  --><l:icon src="${rootURL}/plugin/simple-queue/images/arrow_down_16.png" />
+                            </td>
+                            <td class="pane" width="16" align="center" valign="middle">
                                 <j:if test="${item.hasCancelPermission()}">
                                     <l:stopButton href="${rootURL}/queue/cancelItem?id=${item.id}" confirm="${%confirm(item.task.fullDisplayName)}" alt="${%cancel this build}"/>
                                 </j:if>
-                            </td>
-                            <td class="pane" width="16" align="center" valign="middle">
-                                <!--on click  <l:icon src="${rootURL}/plugin/simple-queue-plugin/images/arrow_up_16.png" />-->
-                                <h1>Velkz nadpis</h1>
                             </td>
                         </tr>
                     </j:forEach>
