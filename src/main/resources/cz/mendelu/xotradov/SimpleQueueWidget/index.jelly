@@ -73,7 +73,7 @@
                         </td>
                         <td class="pane" width="16" align="center" valign="middle">
                             <!--on click  <l:icon src="${rootURL}/plugin/simple-queue-plugin/images/arrow_up_16.png" />-->
-                            <h1>Velkz nadpis</h1>
+                            <h1>Loading</h1>
                         </td>
                     </tr>
                 </j:forEach>
