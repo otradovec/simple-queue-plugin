@@ -64,7 +64,10 @@
                                 <!--on click  --><l:icon src="${rootURL}/plugin/simple-queue/images/arrow_up_16.png" />
                             </td>
                             <td class="pane" width="16" align="center" valign="middle">
-                                <!--on click  --><l:icon src="${rootURL}/plugin/simple-queue/images/arrow_down_16.png" />
+                                <a href="${rootURL}/simpleMove/move?${it.getMoveTypeName()}=1&amp;itemId=${item.id}">
+                                    <l:icon src="${rootURL}/plugin/simple-queue/images/arrow_down_16.png"/>
+                                </a>
+
                             </td>
                             <td class="pane" width="16" align="center" valign="middle">
                                 <j:if test="${item.hasCancelPermission()}">
