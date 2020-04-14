@@ -7,6 +7,9 @@ import jenkins.model.Jenkins;
 
 import java.util.logging.Logger;
 
+/**
+ * @author Jaroslav Otradovec
+ */
 @SuppressWarnings("unused")
 @Extension
 public class SimpleQueueUpdateAction implements RootAction {
@@ -21,6 +24,7 @@ public class SimpleQueueUpdateAction implements RootAction {
         this.queue = queue;
     }
     public static String getMoveTypeName(){return MoveAction.MOVE_TYPE_PARAM_NAME;}
+    public static String getItemIdName(){return MoveAction.ITEM_ID_PARAM_NAME;}
     public Queue.Item[] getItems(){
         return queue.getItems();
     }
@@ -30,20 +34,7 @@ public class SimpleQueueUpdateAction implements RootAction {
         // TODO return podle queue
     }
 
-    public void downClicked(int id){
-        logger.info("downClicked "+String.valueOf(id));
-        try {
-            Queue.Item item = queue.getItem(id);
-            if (item!=null){
-                down(id);
-            }
-        }catch (Exception e){
-            logger.info("Queue item not existing");
-        }
-    }
-    public void down(int id){
-        // TODO posunuti itemu
-    }
+
 
     public String getIconFileName() {
         return null;

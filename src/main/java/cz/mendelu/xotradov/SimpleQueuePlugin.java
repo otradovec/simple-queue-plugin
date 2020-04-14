@@ -25,5 +25,4 @@ public class SimpleQueuePlugin extends Plugin {
         }
     }
 
-
 }

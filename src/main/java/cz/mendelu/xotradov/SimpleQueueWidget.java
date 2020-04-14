@@ -4,6 +4,6 @@ import hudson.Extension;
 import hudson.widgets.Widget;
 
 @SuppressWarnings("unused")
-@Extension
+@Extension(ordinal=199)
 public class SimpleQueueWidget extends Widget {
 }

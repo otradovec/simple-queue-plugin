@@ -41,7 +41,7 @@
                             ${%No builds in the queue.}
                         </td>
                     </tr>
-                    <h1>Vic tu neni</h1>
+                    <h1>Loading</h1>
                 </j:if>
             </j:when>
             <j:otherwise>
