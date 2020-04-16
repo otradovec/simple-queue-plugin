@@ -23,6 +23,7 @@ public class SimpleQueueUpdateAction implements RootAction {
     public SimpleQueueUpdateAction(Queue queue) {
         this.queue = queue;
     }
+
     public static String getMoveTypeName(){return MoveAction.MOVE_TYPE_PARAM_NAME;}
     public static String getItemIdName(){return MoveAction.ITEM_ID_PARAM_NAME;}
     public Queue.Item[] getItems(){
@@ -33,9 +34,7 @@ public class SimpleQueueUpdateAction implements RootAction {
         return false;
         // TODO return podle queue
     }
-
-
-
+    //TODO no arrows with blocked items
     public String getIconFileName() {
         return null;
     }

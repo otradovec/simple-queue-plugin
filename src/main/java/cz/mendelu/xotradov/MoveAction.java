@@ -3,6 +3,7 @@ package cz.mendelu.xotradov;
 import hudson.Extension;
 import hudson.model.Queue;
 import hudson.model.RootAction;
+import hudson.model.queue.QueueSorter;
 import jenkins.model.Jenkins;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -20,6 +21,7 @@ public class MoveAction implements RootAction {
     private static Logger logger = Logger.getLogger(MoveAction.class.getName());
     public static final String MOVE_TYPE_PARAM_NAME= "moveType";
     public static final String ITEM_ID_PARAM_NAME="itemId";
+    private boolean isSorterSet=false;
     @CheckForNull
     @Override
     public String getIconFileName() {
@@ -57,10 +59,8 @@ public class MoveAction implements RootAction {
                         }
                     }
                 }catch (NumberFormatException nfe){
-                    //wrong item id String
                     logger.info("Wrong item id");
                 }catch (IllegalArgumentException iae){
-                    //wrong moveType String
                     logger.info("Wrong move type");
                 }
             }
@@ -72,13 +72,66 @@ public class MoveAction implements RootAction {
         }
     }
 
-    private void moveDown(Queue.Item item, Queue queue) {
-        logger.info(String.valueOf(queue.countBuildableItems()));
+    private void moveDown(Queue.Item itemA, Queue queue) {
+        Queue.Item[] items = queue.getItems();
+        for (Queue.Item item: items) logger.info(String.valueOf(item.getId())+"  "+String.valueOf(item.isBlocked()));
+        Queue.Item itemB = getItemAfter(itemA, items);
+        if (itemB!=null){
+            if (!isSorterSet){
+                setSorter(queue);
+            }
+            QueueSorter queueSorter = queue.getSorter();
+            if (queueSorter instanceof SimpleQueueSorter){
+                ((SimpleQueueSorter) queueSorter).getSimpleQueueComparator().addDesire(itemA.getId(),itemB.getId());
+                resort(queue);
+            }
+        }
+    }
 
+    private Queue.Item getItemAfter(Queue.Item itemA, Queue.Item[] items) {
+        if (items.length >= 2) {
+            Queue.Item previous = null;
+            for (Queue.Item itemB : items) {
+                if ((previous!=null) && (previous.getId() == itemA.getId())) {
+                    return itemB;
+                }
+                previous=itemB;
+            }
+        }
+        return null;
+    }
+
+    private void setSorter(Queue queue) {
+        if (!isSorterSet){
+            QueueSorter originalQueueSorter = queue.getSorter();
+            SimpleQueueSorter simpleQueueSorter = new SimpleQueueSorter(originalQueueSorter);
+            queue.setSorter(simpleQueueSorter);
+            isSorterSet=true;
+        }
+    }
+
+    private Queue.Item getItemBefore(Queue.Item itemA, Queue.Item[] items) {
+        if (items.length >= 2) {
+            Queue.Item itemB = null;
+            for (Queue.Item itemFor : items) {
+                if (itemFor.getId() == itemA.getId()) {
+                    return itemB;
+                }
+                itemB=itemFor;
+            }
+        }
+        return null;
+    }
+
+    private void resort(Queue queue) {
+        queue.getSorter().sortBuildableItems(queue.getBuildableItems());
     }
 
     private void moveUp(Queue.Item item, Queue queue) {
         logger.info(queue.getItems().toString());
+        //TODO check above
+        //TODO add desire
+        //resort(queue);
     }
 
 }
