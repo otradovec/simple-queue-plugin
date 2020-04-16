@@ -127,11 +127,19 @@ public class MoveAction implements RootAction {
         queue.getSorter().sortBuildableItems(queue.getBuildableItems());
     }
 
-    private void moveUp(Queue.Item item, Queue queue) {
-        logger.info(queue.getItems().toString());
-        //TODO check above
-        //TODO add desire
-        //resort(queue);
+    private void moveUp(Queue.Item itemA, Queue queue) {
+        Queue.Item[] items = queue.getItems();
+        Queue.Item itemB = getItemBefore(itemA, items);
+        if (itemB!=null){
+            if (!isSorterSet){
+                setSorter(queue);
+            }
+            QueueSorter queueSorter = queue.getSorter();
+            if (queueSorter instanceof SimpleQueueSorter){
+                ((SimpleQueueSorter) queueSorter).getSimpleQueueComparator().addDesire(itemB.getId(),itemA.getId());
+                resort(queue);
+            }
+        }
     }
 
 }
