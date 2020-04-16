@@ -12,6 +12,8 @@
             Indicates that the queue has been filtered, i.e. might not show all items.
         </st:attribute>
     </st:documentation>
+    <j:set var="items" value="${it.getItems()}"/>
+    <j:set var="filtered" value="${it.isFilterQueue()}"/>
     <t:setIconSize/>
     <j:choose>
         <j:when test="${filtered}">
@@ -67,14 +69,25 @@
                             </j:choose>
                         </td>
                         <td class="pane" width="16" align="center" valign="middle">
-                            <j:if test="${item.hasCancelPermission()}">
-                                <!--<l:stopButton href="${rootURL}/queue/cancelItem?id=${item.id}" confirm="${%confirm(item.task.fullDisplayName)}" alt="${%cancel this build}"/>-->
+                            <j:if test="${h.hasPermission(app.MANAGE)}">
+                                <a href="${rootURL}/simpleMove/move?${it.getMoveTypeName()}=UP&amp;${it.getItemIdName()}=${item.id}">
+                                    <l:icon src="${rootURL}/plugin/simple-queue/images/arrow_up_16.png"/>
+                                </a>
                             </j:if>
                         </td>
                         <td class="pane" width="16" align="center" valign="middle">
-                            <!--on click  <l:icon src="${rootURL}/plugin/simple-queue-plugin/images/arrow_up_16.png" />-->
-                            <h1>Loading</h1>
+                            <j:if test="${h.hasPermission(app.MANAGE)}">
+                                <a href="${rootURL}/simpleMove/move?${it.getMoveTypeName()}=DOWN&amp;${it.getItemIdName()}=${item.id}">
+                                    <l:icon src="${rootURL}/plugin/simple-queue/images/arrow_down_16.png"/>
+                                </a>
+                            </j:if>
                         </td>
+                        <td class="pane" width="16" align="center" valign="middle">
+                            <j:if test="${item.hasCancelPermission()}">
+                                <l:stopButton href="${rootURL}/queue/cancelItem?id=${item.id}" confirm="${%confirm(item.task.fullDisplayName)}" alt="${%cancel this build}"/>
+                            </j:if>
+                        </td>
+
                     </tr>
                 </j:forEach>
             </j:otherwise>

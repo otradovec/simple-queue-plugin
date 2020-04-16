@@ -61,14 +61,18 @@
                                 </j:choose>
                             </td>
                             <td class="pane" width="16" align="center" valign="middle">
-                                <a href="${rootURL}/simpleMove/move?${it.getMoveTypeName()}=UP&amp;${it.getItemIdName()}=${item.id}">
-                                    <l:icon src="${rootURL}/plugin/simple-queue/images/arrow_up_16.png"/>
-                                </a>
+                                <j:if test="${h.hasPermission(app.MANAGE)}">
+                                    <a href="${rootURL}/simpleMove/move?${it.getMoveTypeName()}=UP&amp;${it.getItemIdName()}=${item.id}">
+                                        <l:icon src="${rootURL}/plugin/simple-queue/images/arrow_up_16.png"/>
+                                    </a>
+                                </j:if>
                             </td>
                             <td class="pane" width="16" align="center" valign="middle">
-                                <a href="${rootURL}/simpleMove/move?${it.getMoveTypeName()}=DOWN&amp;${it.getItemIdName()}=${item.id}">
-                                    <l:icon src="${rootURL}/plugin/simple-queue/images/arrow_down_16.png"/>
-                                </a>
+                                <j:if test="${h.hasPermission(app.MANAGE)}">
+                                    <a href="${rootURL}/simpleMove/move?${it.getMoveTypeName()}=DOWN&amp;${it.getItemIdName()}=${item.id}">
+                                        <l:icon src="${rootURL}/plugin/simple-queue/images/arrow_down_16.png"/>
+                                    </a>
+                                </j:if>
                             </td>
                             <td class="pane" width="16" align="center" valign="middle">
                                 <j:if test="${item.hasCancelPermission()}">
