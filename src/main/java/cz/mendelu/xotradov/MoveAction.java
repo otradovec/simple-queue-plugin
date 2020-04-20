@@ -104,6 +104,7 @@ public class MoveAction implements RootAction {
     private void setSorter(Queue queue) {
         if (!isSorterSet){
             QueueSorter originalQueueSorter = queue.getSorter();
+            if (originalQueueSorter == null) originalQueueSorter = new DefaultSorter();
             SimpleQueueSorter simpleQueueSorter = new SimpleQueueSorter(originalQueueSorter);
             queue.setSorter(simpleQueueSorter);
             isSorterSet=true;

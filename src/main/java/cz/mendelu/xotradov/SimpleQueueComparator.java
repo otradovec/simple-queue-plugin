@@ -3,9 +3,10 @@ package cz.mendelu.xotradov;
 import hudson.model.Queue;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class SimpleQueueComparator implements Comparator<Queue.BuildableItem> {
-
+    private static Logger logger = Logger.getLogger(SimpleQueueComparator.class.getName());
     private static Hashtable<Long, List<Long>> moveDesires = new Hashtable<>();
 
     /**
@@ -47,7 +48,7 @@ public class SimpleQueueComparator implements Comparator<Queue.BuildableItem> {
                 bList.add(longB);
             }else {
                 if (!bList.contains(longB)){
-                    bList.add(longB);  //Should it be Long instead of long?
+                    bList.add(longB);
                 }
             }
             //Cleaning of previous order
@@ -61,11 +62,10 @@ public class SimpleQueueComparator implements Comparator<Queue.BuildableItem> {
         }
     }
     //TODO remove when item completed
-    public static void removeDesireOfKey(long id){
+    public void removeDesireOfKey(long id){
         moveDesires.remove(id);
     }
-    //TODO get rid of static
-    public static void resetDesires(){
+    public void resetDesires(){
         moveDesires.clear();
     }
 
