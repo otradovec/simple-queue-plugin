@@ -61,10 +61,11 @@ public class SimpleQueueComparator implements Comparator<Queue.BuildableItem> {
         }
     }
     //TODO remove when item completed
-    public void removeDesireOfKey(long id){
+    public static void removeDesireOfKey(long id){
         moveDesires.remove(id);
     }
-    public void resetDesires(){
+    //TODO get rid of static
+    public static void resetDesires(){
         moveDesires.clear();
     }
 
