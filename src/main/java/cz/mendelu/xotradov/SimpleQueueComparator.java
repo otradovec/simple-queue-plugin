@@ -7,8 +7,15 @@ import java.util.logging.Logger;
 
 public class SimpleQueueComparator implements Comparator<Queue.BuildableItem> {
     private static Logger logger = Logger.getLogger(SimpleQueueComparator.class.getName());
-    private static Hashtable<Long, List<Long>> moveDesires = new Hashtable<>();
+    private Hashtable<Long, List<Long>> moveDesires = new Hashtable<>();
+    private static SimpleQueueComparator instance;
 
+    private SimpleQueueComparator() {
+        instance = this;
+    }
+    public static SimpleQueueComparator getInstance(){
+        return instance == null ? new SimpleQueueComparator() : instance;
+    }
     /**
      * @return -1 when first is more important, 1 when second is more important, default 0
      */

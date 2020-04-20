@@ -41,6 +41,7 @@ public class MoveAction implements RootAction {
     }
 
     public void doMove(final StaplerRequest request, final StaplerResponse response) {
+        //todo permissions check
         Jenkins j;
         if ((j = Jenkins.getInstanceOrNull()) != null) {
             Queue queue = j.getQueue();

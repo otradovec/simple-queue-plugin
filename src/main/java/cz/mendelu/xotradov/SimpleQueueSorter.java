@@ -17,7 +17,7 @@ public class SimpleQueueSorter extends QueueSorter {
 
     public SimpleQueueSorter(QueueSorter originalQueueSorter) {
         this.originalQueueSorter = originalQueueSorter;
-        this.simpleQueueComparator = new SimpleQueueComparator();
+        this.simpleQueueComparator = SimpleQueueComparator.getInstance();
     }
 
     @Override
