@@ -1,11 +1,13 @@
 package cz.mendelu.xotradov;
 
+import hudson.Extension;
 import hudson.model.Queue;
+import hudson.model.queue.QueueListener;
 
 import java.util.*;
 import java.util.logging.Logger;
 
-public class SimpleQueueComparator implements Comparator<Queue.BuildableItem> {
+public class SimpleQueueComparator implements Comparator<Queue.BuildableItem>{
     private static Logger logger = Logger.getLogger(SimpleQueueComparator.class.getName());
     private Hashtable<Long, List<Long>> moveDesires = new Hashtable<>();
     private static SimpleQueueComparator instance;
@@ -68,8 +70,10 @@ public class SimpleQueueComparator implements Comparator<Queue.BuildableItem> {
             }
         }
     }
-    //TODO remove when item completed
+
     public void removeDesireOfKey(long id){
+        logger.info("Removing - - - - - - - -");
+
         moveDesires.remove(id);
     }
     public void resetDesires(){
