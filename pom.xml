@@ -16,6 +16,7 @@
         <java.level>8</java.level>
     </properties>
     <name>Simple Queue Plugin</name>
+    <description>Enables to change queue order by simple up &amp; down arrow buttons</description>
     <licenses>
         <license>
             <name>MIT License</name>
