@@ -73,9 +73,8 @@ public class MoveAction implements RootAction {
         }
     }
 
-    private void moveDown(Queue.Item itemA, Queue queue) {
+    public void moveDown(Queue.Item itemA, Queue queue) {
         Queue.Item[] items = queue.getItems();
-        for (Queue.Item item: items) logger.info(String.valueOf(item.getId())+"  "+String.valueOf(item.isBlocked()));
         Queue.Item itemB = getItemAfter(itemA, items);
         if (itemB!=null){
             if (!isSorterSet){
@@ -129,7 +128,7 @@ public class MoveAction implements RootAction {
         queue.getSorter().sortBuildableItems(queue.getBuildableItems());
     }
 
-    private void moveUp(Queue.Item itemA, Queue queue) {
+    public void moveUp(Queue.Item itemA, Queue queue) {
         Queue.Item[] items = queue.getItems();
         Queue.Item itemB = getItemBefore(itemA, items);
         if (itemB!=null){

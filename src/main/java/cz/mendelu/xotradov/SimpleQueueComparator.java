@@ -72,8 +72,6 @@ public class SimpleQueueComparator implements Comparator<Queue.BuildableItem>{
     }
 
     public void removeDesireOfKey(long id){
-        logger.info("Removing - - - - - - - -");
-
         moveDesires.remove(id);
     }
     public void resetDesires(){
