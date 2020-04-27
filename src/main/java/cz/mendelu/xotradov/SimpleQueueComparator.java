@@ -10,13 +10,13 @@ import java.util.logging.Logger;
 public class SimpleQueueComparator implements Comparator<Queue.BuildableItem>{
     private static Logger logger = Logger.getLogger(SimpleQueueComparator.class.getName());
     private Hashtable<Long, List<Long>> moveDesires = new Hashtable<>();
-    private static SimpleQueueComparator instance;
 
-    private SimpleQueueComparator() {
-        instance = this;
+    private static class SimpleQueueComparatorHolder {
+        static final SimpleQueueComparator INSTANCE = new SimpleQueueComparator();
     }
+
     public static SimpleQueueComparator getInstance(){
-        return instance == null ? new SimpleQueueComparator() : instance;
+        return SimpleQueueComparatorHolder.INSTANCE;
     }
     /**
      * @return -1 when first is more important, 1 when second is more important, default 0
