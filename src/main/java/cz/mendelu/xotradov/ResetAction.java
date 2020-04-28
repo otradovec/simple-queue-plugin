@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class ResetAction implements RootAction {
     private static Logger logger = Logger.getLogger(ResetAction.class.getName());
     public void doReset(final StaplerRequest request, final StaplerResponse response) {
-        //todo permision check
+        if (!Jenkins.get().hasPermission(Jenkins.ADMINISTER)) return;
         QueueSorter queueSorter = Jenkins.get().getQueue().getSorter();
         if (queueSorter instanceof SimpleQueueSorter){
             ((SimpleQueueSorter) queueSorter).reset();
