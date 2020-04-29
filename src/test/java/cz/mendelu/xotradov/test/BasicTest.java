@@ -21,16 +21,18 @@ public class BasicTest {
     public static Logger logger = Logger.getLogger(BasicTest.class.getName());
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
-
+    private TestHelper helper = new TestHelper(jenkinsRule);
+    private static long safeWaitForUpdateTime = 5000;
+    
     @Test
     public void widgetTest() throws Exception {
         Widget widget = jenkinsRule.jenkins.getWidgets().get(1);
         assertTrue(widget instanceof SimpleQueueWidget);
     }
     @Test
-    public void oneBuildSuccesTest() throws Exception {
-        FreeStyleProject projectA = createProject("projectA",1000);
-        QueueTaskFuture futureA = schedule(projectA);
+    public void oneBuildSuccessTest() throws Exception {
+        FreeStyleProject projectA = helper.createProject("projectA",1000);
+        QueueTaskFuture futureA = helper.schedule(projectA);
         while (!Queue.getInstance().getBuildableItems().isEmpty()) {
             Thread.sleep(10);
         }
@@ -39,19 +41,13 @@ public class BasicTest {
 
     @Test
     public void twoItemsUpperDownTest() throws Exception {
-        FreeStyleProject projectA = createProject("projectA",20000);
-        QueueTaskFuture futureA = schedule(projectA); //projectA.doBuild(req,rsp,7000);
-        FreeStyleProject projectB = createProject("projectB", 20000);
-        QueueTaskFuture futureB = schedule(projectB);
+        helper.fillQueueFor(20000);
         Queue queue = Queue.getInstance();
-        while (!queue.getBuildableItems().isEmpty()){
-            Thread.sleep(10);
-        }
         //now can be queue filled predictably
-        FreeStyleProject projectC = createProject("projectC", 20000);
-        QueueTaskFuture futureC = schedule(projectC);
-        FreeStyleProject projectD = createProject("projectD",20000);
-        QueueTaskFuture futureD = schedule(projectD);
+        FreeStyleProject projectC = helper.createProject("projectC", 20000);
+        QueueTaskFuture futureC = helper.schedule(projectC);
+        FreeStyleProject projectD = helper.createProject("projectD",20000);
+        QueueTaskFuture futureD = helper.schedule(projectD);
         while (queue.getBuildableItems().size() != 2){
             Thread.sleep(5);
         }
@@ -63,26 +59,20 @@ public class BasicTest {
         MoveAction moveAction = (MoveAction)jenkinsRule.jenkins.getActions().get(1);
         moveAction.moveDown(queue.getItems()[0],queue);
         //Waiting for maintainerThread or Snapshot update
-        Thread.sleep(6000);
+        Thread.sleep(safeWaitForUpdateTime);
         assertEquals(projectC.getDisplayName(),queue.getItems()[0].task.getDisplayName());
         assertEquals(projectD.getDisplayName(),queue.getItems()[1].task.getDisplayName());
     }
 
     @Test
     public void twoItemsLowerUpTest() throws Exception {
-        FreeStyleProject projectA = createProject("projectA",20000);
-        QueueTaskFuture futureA = schedule(projectA); //projectA.doBuild(req,rsp,7000);
-        FreeStyleProject projectB = createProject("projectB", 20000);
-        QueueTaskFuture futureB = schedule(projectB);
+        helper.fillQueueFor(20000);
         Queue queue = Queue.getInstance();
-        while (!queue.getBuildableItems().isEmpty()){
-            Thread.sleep(10);
-        }
         //now can be queue filled predictably
-        FreeStyleProject projectC = createProject("projectC", 20000);
-        QueueTaskFuture futureC = schedule(projectC);
-        FreeStyleProject projectD = createProject("projectD",20000);
-        QueueTaskFuture futureD = schedule(projectD);
+        FreeStyleProject projectC = helper.createProject("projectC", 20000);
+        QueueTaskFuture futureC = helper.schedule(projectC);
+        FreeStyleProject projectD = helper.createProject("projectD",20000);
+        QueueTaskFuture futureD = helper.schedule(projectD);
         while (queue.getBuildableItems().size() != 2){
             Thread.sleep(5);
         }
@@ -94,26 +84,20 @@ public class BasicTest {
         MoveAction moveAction = (MoveAction)jenkinsRule.jenkins.getActions().get(1);
         moveAction.moveUp(queue.getItems()[1],queue);
         //Waiting for maintainerThread or Snapshot update
-        Thread.sleep(6000);
+        Thread.sleep(safeWaitForUpdateTime);
         assertEquals(projectC.getDisplayName(),queue.getItems()[0].task.getDisplayName());
         assertEquals(projectD.getDisplayName(),queue.getItems()[1].task.getDisplayName());
     }
 
     @Test
     public void backAndForthTest() throws Exception {
-        FreeStyleProject projectA = createProject("projectA",20000);
-        QueueTaskFuture futureA = schedule(projectA); //projectA.doBuild(req,rsp,7000);
-        FreeStyleProject projectB = createProject("projectB", 20000);
-        QueueTaskFuture futureB = schedule(projectB);
+        helper.fillQueueFor(20000);
         Queue queue = Queue.getInstance();
-        while (!queue.getBuildableItems().isEmpty()){
-            Thread.sleep(10);
-        }
         //now can be queue filled predictably
-        FreeStyleProject projectC = createProject("projectC", 20000);
-        QueueTaskFuture futureC = schedule(projectC);
-        FreeStyleProject projectD = createProject("projectD",20000);
-        QueueTaskFuture futureD = schedule(projectD);
+        FreeStyleProject projectC = helper.createProject("projectC", 20000);
+        QueueTaskFuture futureC = helper.schedule(projectC);
+        FreeStyleProject projectD = helper.createProject("projectD",20000);
+        QueueTaskFuture futureD = helper.schedule(projectD);
         while (queue.getBuildableItems().size() != 2){
             Thread.sleep(5);
         }
@@ -125,43 +109,85 @@ public class BasicTest {
         MoveAction moveAction = (MoveAction)jenkinsRule.jenkins.getActions().get(1);
         moveAction.moveUp(queue.getItems()[1],queue);
         //Waiting for maintainerThread or Snapshot update
-        Thread.sleep(6000);
+        Thread.sleep(safeWaitForUpdateTime);
         assertEquals(projectC.getDisplayName(),queue.getItems()[0].task.getDisplayName());
         assertEquals(projectD.getDisplayName(),queue.getItems()[1].task.getDisplayName());
         moveAction.moveDown(queue.getItems()[0],queue);
-        Thread.sleep(6000);
+        Thread.sleep(safeWaitForUpdateTime);
         assertEquals(projectD.getDisplayName(),queue.getItems()[0].task.getDisplayName());
         assertEquals(projectC.getDisplayName(),queue.getItems()[1].task.getDisplayName());
     }
-
-    private QueueTaskFuture schedule(FreeStyleProject projectA) throws Exception {
-        QueueTaskFuture futureA = projectA.scheduleBuild2(0);
-        if (futureA == null) {
-            throw new Exception("the task could not be scheduled");
-        }
-        boolean enteredTheQueueA = false;
-        while (!enteredTheQueueA) {
-            for (Queue.BuildableItem item : Queue.getInstance().getBuildableItems()) {
-                if (item.task.getDisplayName() != null && item.task.getDisplayName().equals(projectA.getDisplayName())) {
-                    enteredTheQueueA = true;
-                }
-            }
-            for (Computer computer: Jenkins.get().getComputers()){
-                if (computer!=null){
-                    for (Executor executor: computer.getExecutors()){
-                        if(executor.getCurrentWorkUnit()!=null && executor.getCurrentWorkUnit().context.task.getDisplayName().equals(projectA.getDisplayName()))return futureA;
-                    }
-                }
-            }
-            Thread.sleep(5);
-        }
-        return futureA;
+    @Test
+    public void fourCUpUp() throws Exception {
+        helper.fillQueueFor(25000);
+        FreeStyleProject projectC = helper.createAndSchedule("projectC",25000);
+        FreeStyleProject projectD = helper.createAndSchedule("projectD",25000);
+        FreeStyleProject projectE = helper.createAndSchedule("projectE",25000);
+        FreeStyleProject projectF = helper.createAndSchedule("projectF",25000);
+        Queue queue = Queue.getInstance();
+        assertEquals(4,queue.getBuildableItems().size());
+        MoveAction moveAction = (MoveAction)jenkinsRule.jenkins.getActions().get(1);
+        assertEquals(projectC.getDisplayName(),queue.getItems()[3].task.getDisplayName());
+        moveAction.moveUp(queue.getItems()[3],queue);
+        Thread.sleep(5000);
+        assertEquals(projectC.getDisplayName(),queue.getItems()[2].task.getDisplayName());
+        moveAction.moveUp(queue.getItems()[2],queue);
+        Thread.sleep(5000);
+        assertEquals(projectF.getDisplayName(),queue.getItems()[0].task.getDisplayName());
+        assertEquals(projectC.getDisplayName(),queue.getItems()[1].task.getDisplayName());
+        assertEquals(projectE.getDisplayName(),queue.getItems()[2].task.getDisplayName());
+        assertEquals(projectD.getDisplayName(),queue.getItems()[3].task.getDisplayName());
     }
-
-    private FreeStyleProject createProject(@Nonnull String projectName, long time) throws IOException {
-        FreeStyleProject projectA = jenkinsRule.createFreeStyleProject(projectName);
-        projectA.getBuildersList().add(new SleepBuilder(time));
-        projectA.setDisplayName(projectName);
-        return projectA;
+    @Test
+    public void fourDUpUpEDown() throws Exception {
+        helper.fillQueueFor(30000);
+        FreeStyleProject projectC = helper.createAndSchedule("projectC",25000);
+        FreeStyleProject projectD = helper.createAndSchedule("projectD",25000);
+        FreeStyleProject projectE = helper.createAndSchedule("projectE",25000);
+        FreeStyleProject projectF = helper.createAndSchedule("projectF",25000);
+        Queue queue = Queue.getInstance();
+        MoveAction moveAction = (MoveAction)jenkinsRule.jenkins.getActions().get(1);
+        assertEquals(projectD.getDisplayName(),queue.getItems()[2].task.getDisplayName());
+        moveAction.moveUp(queue.getItems()[2],queue);//D
+        Thread.sleep(safeWaitForUpdateTime);
+        assertEquals(projectD.getDisplayName(),queue.getItems()[1].task.getDisplayName());
+        moveAction.moveUp(queue.getItems()[1],queue);//D
+        Thread.sleep(safeWaitForUpdateTime);
+        assertEquals(projectE.getDisplayName(),queue.getItems()[2].task.getDisplayName());
+        moveAction.moveDown(queue.getItems()[2],queue);//E
+        Thread.sleep(safeWaitForUpdateTime);
+        assertEquals(projectD.getDisplayName(),queue.getItems()[0].task.getDisplayName());
+        assertEquals(projectF.getDisplayName(),queue.getItems()[1].task.getDisplayName());
+        assertEquals(projectC.getDisplayName(),queue.getItems()[2].task.getDisplayName());
+        assertEquals(projectE.getDisplayName(),queue.getItems()[3].task.getDisplayName());
+    }
+    @Test
+    public void fourFDownDDownCUpUpFDown() throws Exception {
+        helper.fillQueueFor(35000);
+        FreeStyleProject projectC = helper.createAndSchedule("projectC",35000);
+        FreeStyleProject projectD = helper.createAndSchedule("projectD",35000);
+        FreeStyleProject projectE = helper.createAndSchedule("projectE",35000);
+        FreeStyleProject projectF = helper.createAndSchedule("projectF",35000);
+        Queue queue = Queue.getInstance();
+        MoveAction moveAction = (MoveAction)jenkinsRule.jenkins.getActions().get(1);
+        assertEquals(projectF.getDisplayName(),queue.getItems()[0].task.getDisplayName());
+        moveAction.moveDown(queue.getItems()[0],queue);//F
+        Thread.sleep(safeWaitForUpdateTime);
+        assertEquals(projectD.getDisplayName(),queue.getItems()[2].task.getDisplayName());
+        moveAction.moveDown(queue.getItems()[2],queue);//D
+        Thread.sleep(safeWaitForUpdateTime);
+        assertEquals(projectC.getDisplayName(),queue.getItems()[2].task.getDisplayName());
+        moveAction.moveUp(queue.getItems()[2],queue);//C
+        Thread.sleep(safeWaitForUpdateTime);
+        assertEquals(projectC.getDisplayName(),queue.getItems()[1].task.getDisplayName());
+        moveAction.moveUp(queue.getItems()[1],queue);//C
+        Thread.sleep(safeWaitForUpdateTime);
+        assertEquals(projectF.getDisplayName(),queue.getItems()[2].task.getDisplayName());
+        moveAction.moveDown(queue.getItems()[2],queue);//F
+        Thread.sleep(safeWaitForUpdateTime);
+        assertEquals(projectC.getDisplayName(),queue.getItems()[0].task.getDisplayName());
+        assertEquals(projectE.getDisplayName(),queue.getItems()[1].task.getDisplayName());
+        assertEquals(projectD.getDisplayName(),queue.getItems()[2].task.getDisplayName());
+        assertEquals(projectF.getDisplayName(),queue.getItems()[3].task.getDisplayName());
     }
 }
