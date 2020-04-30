@@ -57,6 +57,7 @@ public class MoveAction implements RootAction {
                                 moveDown(item,queue);
                                 break;
                         }
+                        Queue.getInstance().maintain();
                     }
                 }catch (NumberFormatException nfe){
                     logger.info("Wrong item id");

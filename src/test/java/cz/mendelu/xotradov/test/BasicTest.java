@@ -3,7 +3,11 @@ package cz.mendelu.xotradov.test;
 import cz.mendelu.xotradov.MoveAction;
 import cz.mendelu.xotradov.SimpleQueueWidget;
 import hudson.model.*;
+import hudson.model.queue.CauseOfBlockage;
 import hudson.model.queue.QueueTaskFuture;
+import hudson.search.Search;
+import hudson.search.SearchIndex;
+import hudson.security.ACL;
 import hudson.widgets.Widget;
 import jenkins.model.Jenkins;
 import org.junit.Rule;
@@ -11,8 +15,11 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.SleepBuilder;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
@@ -22,8 +29,7 @@ public class BasicTest {
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
     private TestHelper helper = new TestHelper(jenkinsRule);
-    private static long safeWaitForUpdateTime = 5000;
-    
+
     @Test
     public void widgetTest() throws Exception {
         Widget widget = jenkinsRule.jenkins.getWidgets().get(1);
@@ -58,8 +64,7 @@ public class BasicTest {
         assertEquals(2,queue.getItems().length);
         MoveAction moveAction = (MoveAction)jenkinsRule.jenkins.getActions().get(1);
         moveAction.moveDown(queue.getItems()[0],queue);
-        //Waiting for maintainerThread or Snapshot update
-        Thread.sleep(safeWaitForUpdateTime);
+        queue.maintain();
         assertEquals(projectC.getDisplayName(),queue.getItems()[0].task.getDisplayName());
         assertEquals(projectD.getDisplayName(),queue.getItems()[1].task.getDisplayName());
     }
@@ -83,8 +88,7 @@ public class BasicTest {
         assertEquals(2,queue.getItems().length);
         MoveAction moveAction = (MoveAction)jenkinsRule.jenkins.getActions().get(1);
         moveAction.moveUp(queue.getItems()[1],queue);
-        //Waiting for maintainerThread or Snapshot update
-        Thread.sleep(safeWaitForUpdateTime);
+        queue.maintain();
         assertEquals(projectC.getDisplayName(),queue.getItems()[0].task.getDisplayName());
         assertEquals(projectD.getDisplayName(),queue.getItems()[1].task.getDisplayName());
     }
@@ -108,12 +112,11 @@ public class BasicTest {
         assertEquals(2,queue.getItems().length);
         MoveAction moveAction = (MoveAction)jenkinsRule.jenkins.getActions().get(1);
         moveAction.moveUp(queue.getItems()[1],queue);
-        //Waiting for maintainerThread or Snapshot update
-        Thread.sleep(safeWaitForUpdateTime);
+        queue.maintain();
         assertEquals(projectC.getDisplayName(),queue.getItems()[0].task.getDisplayName());
         assertEquals(projectD.getDisplayName(),queue.getItems()[1].task.getDisplayName());
         moveAction.moveDown(queue.getItems()[0],queue);
-        Thread.sleep(safeWaitForUpdateTime);
+        queue.maintain();
         assertEquals(projectD.getDisplayName(),queue.getItems()[0].task.getDisplayName());
         assertEquals(projectC.getDisplayName(),queue.getItems()[1].task.getDisplayName());
     }
@@ -149,13 +152,13 @@ public class BasicTest {
         MoveAction moveAction = (MoveAction)jenkinsRule.jenkins.getActions().get(1);
         assertEquals(projectD.getDisplayName(),queue.getItems()[2].task.getDisplayName());
         moveAction.moveUp(queue.getItems()[2],queue);//D
-        Thread.sleep(safeWaitForUpdateTime);
+        queue.maintain();
         assertEquals(projectD.getDisplayName(),queue.getItems()[1].task.getDisplayName());
         moveAction.moveUp(queue.getItems()[1],queue);//D
-        Thread.sleep(safeWaitForUpdateTime);
+        queue.maintain();
         assertEquals(projectE.getDisplayName(),queue.getItems()[2].task.getDisplayName());
         moveAction.moveDown(queue.getItems()[2],queue);//E
-        Thread.sleep(safeWaitForUpdateTime);
+        queue.maintain();
         assertEquals(projectD.getDisplayName(),queue.getItems()[0].task.getDisplayName());
         assertEquals(projectF.getDisplayName(),queue.getItems()[1].task.getDisplayName());
         assertEquals(projectC.getDisplayName(),queue.getItems()[2].task.getDisplayName());
@@ -172,19 +175,19 @@ public class BasicTest {
         MoveAction moveAction = (MoveAction)jenkinsRule.jenkins.getActions().get(1);
         assertEquals(projectF.getDisplayName(),queue.getItems()[0].task.getDisplayName());
         moveAction.moveDown(queue.getItems()[0],queue);//F
-        Thread.sleep(safeWaitForUpdateTime);
+        queue.maintain();
         assertEquals(projectD.getDisplayName(),queue.getItems()[2].task.getDisplayName());
         moveAction.moveDown(queue.getItems()[2],queue);//D
-        Thread.sleep(safeWaitForUpdateTime);
+        queue.maintain();
         assertEquals(projectC.getDisplayName(),queue.getItems()[2].task.getDisplayName());
         moveAction.moveUp(queue.getItems()[2],queue);//C
-        Thread.sleep(safeWaitForUpdateTime);
+        queue.maintain();
         assertEquals(projectC.getDisplayName(),queue.getItems()[1].task.getDisplayName());
         moveAction.moveUp(queue.getItems()[1],queue);//C
-        Thread.sleep(safeWaitForUpdateTime);
+        queue.maintain();
         assertEquals(projectF.getDisplayName(),queue.getItems()[2].task.getDisplayName());
         moveAction.moveDown(queue.getItems()[2],queue);//F
-        Thread.sleep(safeWaitForUpdateTime);
+        queue.maintain();
         assertEquals(projectC.getDisplayName(),queue.getItems()[0].task.getDisplayName());
         assertEquals(projectE.getDisplayName(),queue.getItems()[1].task.getDisplayName());
         assertEquals(projectD.getDisplayName(),queue.getItems()[2].task.getDisplayName());
