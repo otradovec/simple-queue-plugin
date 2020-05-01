@@ -34,5 +34,6 @@ public class SimpleQueueSorter extends QueueSorter {
     public void reset() {
         simpleQueueComparator.resetDesires();
         sortBuildableItems(Jenkins.get().getQueue().getBuildableItems());
+        Queue.getInstance().maintain();
     }
 }

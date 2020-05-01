@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class ResetAction implements RootAction {
     private static Logger logger = Logger.getLogger(ResetAction.class.getName());
     public void doReset(final StaplerRequest request, final StaplerResponse response) {
-        if (!Jenkins.get().hasPermission(Jenkins.ADMINISTER)) return;
+        if (!Jenkins.get().hasPermission(PermissionHandler.SIMPLE_QUEUE_RESET_PERMISSION)) return;
         QueueSorter queueSorter = Jenkins.get().getQueue().getSorter();
         if (queueSorter instanceof SimpleQueueSorter){
             ((SimpleQueueSorter) queueSorter).reset();
@@ -31,19 +31,31 @@ public class ResetAction implements RootAction {
     @CheckForNull
     @Override
     public String getIconFileName() {
-        return "/plugin/simple-queue/images/reset_64.png";
+        if (Jenkins.get().hasPermission(PermissionHandler.SIMPLE_QUEUE_RESET_PERMISSION)){
+            return "/plugin/simple-queue/images/reset_64.png";
+        }else {
+            return null;
+        }
     }
 
     @CheckForNull
     @Override
     public String getDisplayName() {
-        return "Reset Simple-Queue";
+        if (Jenkins.get().hasPermission(PermissionHandler.SIMPLE_QUEUE_RESET_PERMISSION)){
+            return "Reset Simple-Queue";
+        }else {
+            return null;
+        }
     }
 
     @CheckForNull
     @Override
     public String getUrlName() {
-        return "simpleQueueReset";
+        if (Jenkins.get().hasPermission(PermissionHandler.SIMPLE_QUEUE_RESET_PERMISSION)){
+            return "simpleQueueReset";
+        }else {
+            return null;
+        }
     }
 
 }
