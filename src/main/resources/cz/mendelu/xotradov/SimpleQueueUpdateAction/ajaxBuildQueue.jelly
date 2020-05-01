@@ -9,10 +9,10 @@
         <t:setIconSize/>
         <j:choose>
             <j:when test="${filtered}">
-                <j:set var="title" value="${%Filtered Build Queue(items.size())}" />
+                <j:set var="title" value="Filtered Build Queue (${items.size()})" />
             </j:when>
             <j:otherwise>
-                <j:set var="title" value="${%Build Queue(items.size())}" />
+                <j:set var="title" value="Build Queue (${items.size()})" />
             </j:otherwise>
         </j:choose>
 

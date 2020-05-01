@@ -32,9 +32,7 @@ public class SimpleQueueUpdateAction implements RootAction {
 
     public boolean isFilterQueue(){
         return false;
-        // TODO return podle queue
     }
-    //TODO no arrows with blocked items
     public String getIconFileName() {
         return null;
     }
