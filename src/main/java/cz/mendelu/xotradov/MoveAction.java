@@ -37,14 +37,18 @@ public class MoveAction implements RootAction {
     @CheckForNull
     @Override
     public String getUrlName() {
-        return "simpleMove";
+        if (Jenkins.get().hasPermission(PermissionHandler.SIMPLE_QUEUE_MOVE_PERMISSION)){
+            return "simpleMove";
+        }else {
+            return null;
+        }
     }
 
     public void doMove(final StaplerRequest request, final StaplerResponse response) {
         Jenkins j;
         if ((j = Jenkins.getInstanceOrNull()) != null) {
             Queue queue = j.getQueue();
-            if (queue != null & j.hasPermission(Jenkins.ADMINISTER)) {
+            if (queue != null & j.hasPermission(PermissionHandler.SIMPLE_QUEUE_MOVE_PERMISSION)) {
                 try {
                     Queue.Item item = queue.getItem(Long.parseLong(request.getParameter(ITEM_ID_PARAM_NAME)));
                     MoveType moveType = MoveType.valueOf(request.getParameter(MOVE_TYPE_PARAM_NAME));
