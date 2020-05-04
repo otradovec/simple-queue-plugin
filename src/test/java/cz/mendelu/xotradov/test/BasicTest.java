@@ -32,7 +32,7 @@ public class BasicTest {
 
     @Test
     public void widgetTest() throws Exception {
-        Widget widget = jenkinsRule.jenkins.getWidgets().get(1);
+        Widget widget = jenkinsRule.jenkins.getWidgets().get(0);
         assertTrue(widget instanceof SimpleQueueWidget);
     }
     @Test
