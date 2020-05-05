@@ -18,6 +18,9 @@ public class SimpleQueueComparator implements Comparator<Queue.BuildableItem>{
     public static SimpleQueueComparator getInstance(){
         return SimpleQueueComparatorHolder.INSTANCE;
     }
+    public boolean hasDesiresFor(long key){
+        return moveDesires.containsKey(key);
+    }
     /**
      * @return -1 when first is more important, 1 when second is more important, default 0
      */
@@ -31,7 +34,7 @@ public class SimpleQueueComparator implements Comparator<Queue.BuildableItem>{
             return 0;
         }
     }
-    public boolean isFirstItemOverSecond(long id0, long id1) {
+    private boolean isFirstItemOverSecond(long id0, long id1) {
         if (moveDesires.get(id0)!=null){
             return moveDesires.get(id0).contains(id1);
         }else {

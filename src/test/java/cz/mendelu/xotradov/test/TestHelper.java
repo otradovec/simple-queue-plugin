@@ -1,5 +1,7 @@
 package cz.mendelu.xotradov.test;
 
+import cz.mendelu.xotradov.MoveAction;
+import cz.mendelu.xotradov.ResetAction;
 import hudson.model.*;
 import hudson.model.queue.QueueTaskFuture;
 import jenkins.model.Jenkins;
@@ -44,7 +46,7 @@ public class TestHelper {
         projectA.setDisplayName(projectName);
         return projectA;
     }
-    public FreeStyleProject createAndSchedule(@Nonnull String projectName, long millisOfBuild) throws Exception {
+    public FreeStyleProject createAndSchedule(@Nonnull String projectName, long millisOfBuild)  throws Exception {
         FreeStyleProject projectA = createProject(projectName,millisOfBuild);
         schedule(projectA);
         return projectA;
@@ -58,5 +60,23 @@ public class TestHelper {
         while (!queue.getBuildableItems().isEmpty()){
             Thread.sleep(10);
         }
+    }
+
+    public ResetAction getResetAction() {
+        for (Action action: r.jenkins.getActions()){
+            if (action instanceof ResetAction){
+                return (ResetAction) action;
+            }
+        }
+        return null;
+    }
+
+    public MoveAction getMoveAction() {
+        for (Action action: r.jenkins.getActions()){
+            if (action instanceof MoveAction){
+                return (MoveAction) action;
+            }
+        }
+        return null;
     }
 }

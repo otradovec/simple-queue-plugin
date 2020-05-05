@@ -132,10 +132,10 @@ public class BasicTest {
         MoveAction moveAction = (MoveAction)jenkinsRule.jenkins.getActions().get(1);
         assertEquals(projectC.getDisplayName(),queue.getItems()[3].task.getDisplayName());
         moveAction.moveUp(queue.getItems()[3],queue);
-        Thread.sleep(5000);
+        queue.maintain();
         assertEquals(projectC.getDisplayName(),queue.getItems()[2].task.getDisplayName());
         moveAction.moveUp(queue.getItems()[2],queue);
-        Thread.sleep(5000);
+        queue.maintain();
         assertEquals(projectF.getDisplayName(),queue.getItems()[0].task.getDisplayName());
         assertEquals(projectC.getDisplayName(),queue.getItems()[1].task.getDisplayName());
         assertEquals(projectE.getDisplayName(),queue.getItems()[2].task.getDisplayName());
