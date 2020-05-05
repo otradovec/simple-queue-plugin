@@ -7,6 +7,11 @@ import hudson.model.queue.QueueListener;
 import java.util.*;
 import java.util.logging.Logger;
 
+/**
+ * The comparator backs up the SimpleQueueSorter.
+ * It stores all current desires - acts of will concerning order of build items.
+ * @author Jaroslav Otradovec
+ */
 public class SimpleQueueComparator implements Comparator<Queue.BuildableItem>{
     private static Logger logger = Logger.getLogger(SimpleQueueComparator.class.getName());
     private Hashtable<Long, List<Long>> moveDesires = new Hashtable<>();

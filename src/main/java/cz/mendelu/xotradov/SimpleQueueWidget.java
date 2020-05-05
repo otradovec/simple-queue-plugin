@@ -8,6 +8,9 @@ import jenkins.model.Jenkins;
 
 import java.util.logging.Logger;
 
+/**
+ * SimpleQueueWidget replaces the default BuildQueueWidget and adds arrows to each buildable item.
+ */
 @SuppressWarnings("unused")
 @Extension(ordinal=199)
 public class SimpleQueueWidget extends Widget {

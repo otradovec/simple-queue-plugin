@@ -31,9 +31,15 @@ public class BasicTest {
     private TestHelper helper = new TestHelper(jenkinsRule);
 
     @Test
-    public void widgetTest() throws Exception {
-        Widget widget = jenkinsRule.jenkins.getWidgets().get(0);
-        assertTrue(widget instanceof SimpleQueueWidget);
+    public void widgetPresenceTest() throws Exception {
+        boolean presence = false;
+        for (Widget widget1: jenkinsRule.jenkins.getWidgets()){
+            if (widget1 instanceof SimpleQueueWidget) {
+                presence = true;
+                break;
+            }
+        }
+        assertTrue(presence);
     }
     @Test
     public void oneBuildSuccessTest() throws Exception {

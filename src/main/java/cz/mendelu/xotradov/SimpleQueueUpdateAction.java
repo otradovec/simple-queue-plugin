@@ -8,6 +8,7 @@ import jenkins.model.Jenkins;
 import java.util.logging.Logger;
 
 /**
+ * Used to enable updating of queue widget.
  * @author Jaroslav Otradovec
  */
 @SuppressWarnings("unused")

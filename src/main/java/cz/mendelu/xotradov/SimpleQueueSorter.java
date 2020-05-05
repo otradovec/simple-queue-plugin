@@ -9,6 +9,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * The new sorter of Simple Queue plugin. Preserves the order of default jenkins sorter, when no desires have been made.
+ */
 @SuppressWarnings("unused")
 public class SimpleQueueSorter extends QueueSorter {
     private static Logger logger = Logger.getLogger(SimpleQueueSorter.class.getName());

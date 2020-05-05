@@ -7,6 +7,10 @@ import hudson.model.queue.QueueSorter;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * This imitates default jenkins sorter.
+ * Has comparing from QueueSorter extension point which compares Items based on getInQueueSince().
+ */
 public class DefaultSorter extends AbstractQueueSorterImpl implements Serializable {
     @Override
     public void sortBuildableItems(List<Queue.BuildableItem> list) {

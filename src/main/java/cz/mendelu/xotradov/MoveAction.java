@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
+ * Handles request to move one buildable item in a build queue, which is the core functionality of this plugin.
  * @author Jaroslav Otradovec
  */
 @SuppressWarnings("unused")

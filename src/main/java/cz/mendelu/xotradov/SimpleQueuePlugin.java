@@ -22,6 +22,7 @@ public class SimpleQueuePlugin extends Plugin {
         }else {
             Widget queueWidget = Jenkins.get().getWidgets().get(0);
             Jenkins.get().getWidgets().remove(queueWidget);
+            logger.info("Removing BuildQueueWidget");
         }
     }
 
